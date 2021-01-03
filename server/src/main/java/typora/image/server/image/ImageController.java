@@ -1,18 +1,25 @@
 package typora.image.server.image;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
 import org.springframework.hateoas.EntityModel;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import typora.image.server.entity.ImageInfo;
 import typora.image.server.service.ImageService;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
+import java.net.URLEncoder;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,7 +37,7 @@ public class ImageController {
     }
 
     @PostMapping
-    public ResponseEntity uploadImage(@RequestParam("file")MultipartFile file){
+    public ResponseEntity uploadImage(@RequestParam("file")MultipartFile file) throws IOException {
         List<ImageResource> imageResources = new ArrayList<>();
 
         //파일 업로드 진행
@@ -40,6 +47,31 @@ public class ImageController {
         URI createdUri = selfLinkBuilder.toUri();
 
         return ResponseEntity.created(createdUri).body(createdUri);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Resource> downloadImage(@PathVariable Long id, HttpServletRequest request) throws IOException {
+        ImageDto resource =  imageService.downloadImage(id);
+
+        String fileName = resource.getFileName();
+        String userAgent = request.getHeader("User-Agent");
+
+        String saveName = setEndoing(userAgent, fileName);
+
+        return ResponseEntity.ok()
+                .contentType(MediaType.parseMediaType(resource.getMimeType()))
+                .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\""+saveName+"\"")
+                .body(resource.getImageResource());
+    }
+
+    private String setEndoing(String userAgent, String fileName) throws UnsupportedEncodingException {
+        if (userAgent.contains("MSIE") || userAgent.contains("Trident")) {
+            fileName = URLEncoder.encode(fileName,"UTF-8").replaceAll("\\+", "%20");
+        } else {
+            fileName = new String(fileName.getBytes("UTF-8"), "ISO-8859-1");
+        }
+
+        return fileName;
     }
 
 }

@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 import typora.image.server.entity.ImageInfo;
 import typora.image.server.image.ImageDto;
 import typora.image.server.image.ImageRepository;
+import typora.image.server.image.NotImageException;
 import typora.image.server.properties.FileUploadProperties;
 import typora.image.server.service.ImageService;
 
@@ -44,6 +45,9 @@ public class ImageServiceImpl implements ImageService {
     public Long uploadImage(MultipartFile file) throws IOException{
 
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        if(!file.getContentType().startsWith("image/")){
+            throw new NotImageException("이미지 타입만 업로드 가능합니다.");
+        }
         String randomFileName = UUID.randomUUID() + "_" + fileName;
 
         Path targetLocation = this.filePath.resolve(randomFileName);

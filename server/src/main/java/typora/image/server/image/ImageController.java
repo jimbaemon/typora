@@ -38,7 +38,6 @@ public class ImageController {
 
     @PostMapping
     public ResponseEntity uploadImage(@RequestParam("file")MultipartFile file) throws IOException {
-        List<ImageResource> imageResources = new ArrayList<>();
 
         //파일 업로드 진행
         Long id = imageService.uploadImage(file);
@@ -50,8 +49,9 @@ public class ImageController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Resource> downloadImage(@PathVariable Long id, HttpServletRequest request) throws IOException {
-        ImageDto resource =  imageService.downloadImage(id);
+    public ResponseEntity<Resource> downloadImage(@PathVariable Long id, HttpServletRequest request) throws IOException, NotImageException {
+
+        ImageDto resource = imageService.downloadImage(id);
 
         String fileName = resource.getFileName();
         String userAgent = request.getHeader("User-Agent");

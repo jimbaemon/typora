@@ -45,6 +45,7 @@ public class ImageServiceImpl implements ImageService {
     public Long uploadImage(MultipartFile file) throws IOException{
 
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        System.out.println(file.getContentType());
         if(!file.getContentType().startsWith("image/")){
             throw new NotImageException("이미지 타입만 업로드 가능합니다.");
         }

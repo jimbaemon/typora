@@ -45,7 +45,7 @@ public class ImageController {
         var selfLinkBuilder = linkTo(ImageController.class).slash(id);
         URI createdUri = selfLinkBuilder.toUri();
 
-        return ResponseEntity.created(createdUri).body(createdUri+".dummy");
+        return ResponseEntity.created(createdUri).body(createdUri.toString());
     }
 
     @GetMapping("/{id}")

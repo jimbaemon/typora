@@ -42,7 +42,7 @@ public class ImageServiceImpl implements ImageService {
     }
 
     @Override
-    public Long uploadImage(MultipartFile file) throws IOException{
+    public ImageInfo uploadImage(MultipartFile file) throws IOException{
 
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         System.out.println(file.getContentType());
@@ -62,7 +62,7 @@ public class ImageServiceImpl implements ImageService {
 
         ImageInfo save = imageRepository.save(imageInfo);
 
-        return save.getId();
+        return imageInfo;
     }
 
     @Override

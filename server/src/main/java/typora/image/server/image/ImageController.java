@@ -40,20 +40,20 @@ public class ImageController {
     public ResponseEntity uploadImage(@RequestParam("file")MultipartFile file) throws IOException {
 
         //파일 업로드 진행
-        Long id = imageService.uploadImage(file);
+        ImageInfo imageInfo = imageService.uploadImage(file);
 
-        var selfLinkBuilder = linkTo(ImageController.class).slash(id);
+        var selfLinkBuilder = linkTo(ImageController.class).slash(imageInfo.getId());
         URI createdUri = selfLinkBuilder.toUri();
+        URI downloadUri = selfLinkBuilder.slash(imageInfo.getFileOrgName()).toUri();
 
-        return ResponseEntity.created(createdUri).body(createdUri+".dummy");
+        return ResponseEntity.created(createdUri).body(downloadUri.toString());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Resource> downloadImage(@PathVariable Long id, HttpServletRequest request) throws IOException, NotImageException {
+    @GetMapping("/{id}/{fileName}")
+    public ResponseEntity<Resource> downloadImage(@PathVariable Long id, @PathVariable String fileName, HttpServletRequest request) throws IOException, NotImageException {
 
         ImageDto resource = imageService.downloadImage(id);
 
-        String fileName = resource.getFileName();
         String userAgent = request.getHeader("User-Agent");
 
         String saveName = setEndoing(userAgent, fileName);

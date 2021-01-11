@@ -10,7 +10,7 @@ import java.net.MalformedURLException;
 
 public interface ImageService {
 
-    Long uploadImage(MultipartFile file) throws IOException;
+    ImageInfo uploadImage(MultipartFile file) throws IOException;
 
     ImageDto downloadImage(Long id) throws IOException;
 }

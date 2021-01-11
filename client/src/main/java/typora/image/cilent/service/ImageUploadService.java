@@ -26,7 +26,7 @@ public class ImageUploadService {
     public String imageUpload(String filePath) throws IOException {
         CloseableHttpClient client = HttpClients.createDefault();
 
-        HttpPost post = new HttpPost("http://127.0.0.1/image");
+        HttpPost post = new HttpPost("http://www.jimbae.com:59005/image");
         File file = new File(filePath);
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);

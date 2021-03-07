@@ -27,6 +27,7 @@ public class ImageUploadService {
         CloseableHttpClient client = HttpClients.createDefault();
 
         HttpPost post = new HttpPost("http://www.jimbae.com:59005/image");
+        HttpPost post = new HttpPost("http://127.0.0.1:59005/image");
         File file = new File(filePath);
         MultipartEntityBuilder builder = MultipartEntityBuilder.create();
         builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
